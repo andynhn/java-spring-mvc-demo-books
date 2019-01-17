@@ -51,4 +51,29 @@ public class BooksController {
     	model.addAttribute("book", book);
     	return "/books/show";
     }
+    @RequestMapping("/books/{id}/edit")
+    public String edit(@PathVariable("id") Long id, Model model) {
+    	Book book = bookService.findBook(id);
+    	model.addAttribute("book", book);
+    	return "/books/edit";
+    }
+    @RequestMapping(value="/books/{id}", method=RequestMethod.PUT)
+    public String update(@Valid @ModelAttribute("book") Book book, BindingResult result) {
+    	if (result.hasErrors()) {
+    		return "/books/edit";
+    	} else {
+    		Long id = book.getId();
+    		String title = book.getTitle();
+    		String description = book.getDescription();
+    		String language = book.getLanguage();
+    		Integer numberOfPages = book.getNumberOfPages();
+    		bookService.updateBook(id, title, description, language, numberOfPages);
+    		return "redirect:/books";
+    	}
+    }
+    @RequestMapping(value="/books/{id}", method=RequestMethod.DELETE)
+    public String destroy(@PathVariable("id") Long id) {
+    	bookService.deleteBook(id);
+    	return "redirect:/books";
+    }
 }
